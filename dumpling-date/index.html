@@ -1,0 +1,310 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Dumpling Date</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gloock&family=Outfit:wght@300;400;600&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+*,*::before,*::after{box-sizing:border-box}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Layout: one-screen phone app, a bamboo steamer as the stage, scenes swapped in place */
+:root{
+  --ink:#16201b;
+  --ink-2:#202d26;
+  --bamboo:#d6b47a;
+  --bamboo-dk:#a9864f;
+  --lacquer:#c7332b;
+  --rice:#f5efe3;
+  --muted:#b3bcb1;
+  --display:"Gloock", Georgia, "Times New Roman", serif;
+  --body:"Outfit", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  color-scheme:dark;
+}
+html,body{height:100%}
+body{
+  margin:0;
+  background:var(--ink);color:var(--rice);font-family:var(--body);font-size:16px;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  padding-left:max(16px, env(safe-area-inset-left,0px));
+  padding-right:max(16px, env(safe-area-inset-right,0px));
+  overflow-x:hidden;
+  background-image:radial-gradient(120% 70% at 50% 0%, var(--ink-2), var(--ink) 70%);
+}
+.app{min-height:100%;max-width:440px;margin:0 auto;display:flex;flex-direction:column;justify-content:center;gap:24px;padding-block:28px;position:relative}
+.scene{display:flex;flex-direction:column;align-items:center;gap:20px;text-align:center;animation:rise .7s ease both}
+@keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--bamboo)}
+h1,h2{font-family:var(--display);font-weight:400;margin:0;text-wrap:balance;line-height:1.1}
+h1{font-size:clamp(32px,9.5vw,44px)}
+h2{font-size:clamp(26px,7.6vw,34px)}
+p{margin:0;color:var(--muted);line-height:1.6;max-width:34ch;font-size:17px;font-weight:300}
+em{font-style:normal;color:var(--bamboo)}
+
+/* love-note cards */
+.note{width:100%;background:var(--ink-2);border:1px solid #33433a;border-radius:22px;padding:30px 24px;display:flex;flex-direction:column;gap:16px;text-align:left;cursor:pointer;font-family:var(--body)}
+.note p{color:var(--rice);font-size:19px;line-height:1.6;max-width:none}
+.note p.soft{color:var(--muted);font-size:16px}
+.note:focus-visible{outline:2px solid var(--bamboo);outline-offset:4px}
+.dots{display:flex;gap:8px;justify-content:center}
+.dots i{width:7px;height:7px;border-radius:50%;background:#3a4840}
+.dots i.on{background:var(--bamboo)}
+
+/* steamer */
+.steamer{position:relative;width:min(240px,62vw);aspect-ratio:1/0.82;max-width:100%;cursor:pointer;border:0;background:none;padding:0}
+.steamer:focus-visible{outline:2px solid var(--bamboo);outline-offset:8px;border-radius:20px}
+.basket,.lid{position:absolute;left:0;right:0;border-radius:50%/34%;
+  background:repeating-linear-gradient(90deg,var(--bamboo) 0 9px,var(--bamboo-dk) 9px 11px);
+  box-shadow:inset 0 -10px 0 rgba(0,0,0,.18), 0 18px 30px rgba(0,0,0,.45)}
+.basket{bottom:0;height:46%}
+.basket::before{content:"";position:absolute;inset:-18% 4% auto;height:52%;border-radius:50%;background:radial-gradient(ellipse at 50% 60%,#5b4426,#2b2013)}
+.dumps{position:absolute;inset:-14% 14% auto;height:40%;display:flex;justify-content:center;align-items:flex-end;gap:4%}
+.dump{width:26%;aspect-ratio:1.15;border-radius:50% 50% 46% 46%/62% 62% 38% 38%;background:radial-gradient(circle at 50% 18%,#fffaf0 0 8%,var(--rice) 9% 60%,#d9cfbd);position:relative}
+.dump::after{content:"";position:absolute;left:50%;top:6%;width:30%;height:22%;transform:translateX(-50%);border-radius:50%;background:repeating-conic-gradient(#e2d7c3 0 10deg,var(--rice) 10deg 20deg)}
+.lid{top:0;height:58%;transition:transform .9s cubic-bezier(.3,1.4,.5,1);z-index:2;display:grid;place-items:center}
+.lid::before{content:"";width:62%;height:42%;border-radius:50%;border:2px solid rgba(0,0,0,.18)}
+.lid span{position:absolute;font-family:var(--display);font-size:24px;color:var(--lacquer);top:27%}
+.steamer.open .lid{transform:translate(55%,-70%) rotate(24deg)}
+.steam{position:absolute;bottom:40%;width:14px;height:70px;border-radius:50%;background:linear-gradient(to top,rgba(245,239,227,.5),transparent);filter:blur(5px);opacity:0}
+.steamer.open .steam{animation:steam 2.6s ease-in-out infinite}
+.steam:nth-child(1){left:30%}.steam:nth-child(2){left:48%;animation-delay:.7s!important}.steam:nth-child(3){left:64%;animation-delay:1.3s!important}
+@keyframes steam{0%{opacity:0;transform:translateY(10px) scaleX(1)}40%{opacity:.8}100%{opacity:0;transform:translateY(-70px) scaleX(1.8)}}
+.hint{font-family:var(--mono);font-size:12px;color:var(--muted);animation:pulse 1.8s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+/* buttons */
+.btn{font:600 17px var(--body);border:0;border-radius:999px;padding:15px 34px;cursor:pointer;transition:transform .25s, padding .3s, font-size .3s}
+.btn:focus-visible{outline:2px solid var(--rice);outline-offset:3px}
+.yes{background:var(--lacquer);color:var(--rice);box-shadow:0 8px 24px rgba(199,51,43,.35)}
+.yes:active{transform:scale(.96)}
+.no{background:transparent;color:var(--muted);border:1px solid #3a4840}
+.choice{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;min-height:70px;width:100%}
+.no.flee{position:absolute;transition:left .25s ease, top .25s ease;z-index:3}
+.tease{font-family:var(--mono);font-size:12px;color:var(--bamboo);min-height:1.4em;max-width:30ch}
+.when{font-family:var(--mono);font-size:13px;letter-spacing:.08em;color:var(--rice);border:1px solid var(--bamboo);border-radius:999px;padding:8px 16px}
+
+/* dish picker */
+.chips{width:100%;display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px}
+.chip{font:400 15px var(--body);color:var(--rice);background:var(--ink-2);border:1px solid #33433a;border-radius:14px;padding:12px 10px;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:2px;min-width:0}
+.chip small{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--bamboo);background:#2b2a1d;box-shadow:inset 0 0 0 1px var(--bamboo)}
+.chip:focus-visible{outline:2px solid var(--bamboo);outline-offset:2px}
+.next[disabled]{opacity:.35;cursor:not-allowed;box-shadow:none}
+
+/* ticket */
+.ticket{width:100%;background:var(--rice);color:#1d1a14;border-radius:18px;padding:22px 20px;text-align:left;position:relative;display:flex;flex-direction:column;gap:14px;
+  -webkit-mask:radial-gradient(circle 12px at 0 58%,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 58%,transparent 98%,#000) right/51% 100% no-repeat;
+          mask:radial-gradient(circle 12px at 0 58%,transparent 98%,#000) left/51% 100% no-repeat,radial-gradient(circle 12px at 100% 58%,transparent 98%,#000) right/51% 100% no-repeat}
+.ticket h3{font-family:var(--display);font-weight:400;font-size:28px;margin:0;line-height:1.05}
+.ticket .row{display:flex;justify-content:space-between;gap:12px;font-size:15px;border-top:1px dashed #cbbfa8;padding-top:10px}
+.ticket .row span:first-child{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#7a6e5a;padding-top:3px;flex:none}
+.ticket .row span:last-child{text-align:right;min-width:0}
+.ticket .ps{font-size:14px;line-height:1.5;color:#4b4335;border-top:1px dashed #cbbfa8;padding-top:12px;font-style:italic}
+.stamp{position:absolute;right:16px;top:16px;width:64px;height:64px;border-radius:50%;border:2px solid var(--lacquer);color:var(--lacquer);display:grid;place-items:center;font:600 11px var(--mono);letter-spacing:.1em;transform:rotate(-14deg);text-align:center;line-height:1.2}
+.ticket a{color:var(--lacquer)}
+.small{font-size:15px}
+.confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:5}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<canvas class="confetti" id="fx"></canvas>
+<main class="app" id="app">
+
+  <section class="scene">
+    <div class="eyebrow">Special delivery · for you</div>
+    <h1>Something warm is waiting for you</h1>
+    <button class="steamer" id="steamer" aria-label="Lift the lid">
+      <i class="steam"></i><i class="steam"></i><i class="steam"></i>
+      <div class="basket"><div class="dumps"><b class="dump"></b><b class="dump"></b><b class="dump"></b></div></div>
+      <div class="lid"><span>鼎</span></div>
+    </button>
+    <div class="hint" id="hint">tap the lid</div>
+  </section>
+
+  <section class="scene" hidden>
+    <div class="eyebrow">Note 1 of 3</div>
+    <button class="note" data-next>
+      <p>Before anything else, I just wanted to say I'm really glad you're mine.</p>
+      <p class="soft">I don't say it enough, so I figured I'd put it somewhere you can come back to.</p>
+    </button>
+    <div class="dots"><i class="on"></i><i></i><i></i></div>
+    <div class="hint">tap to keep reading</div>
+  </section>
+
+  <section class="scene" hidden>
+    <div class="eyebrow">Note 2 of 3</div>
+    <button class="note" data-next>
+      <p>Somewhere along the way, you became the best part of my day.</p>
+      <p class="soft">The long ones, the boring ones, the ones where everything goes wrong. They all get better the moment I hear from you.</p>
+    </button>
+    <div class="dots"><i></i><i class="on"></i><i></i></div>
+    <div class="hint">tap to keep reading</div>
+  </section>
+
+  <section class="scene" hidden>
+    <div class="eyebrow">Note 3 of 3</div>
+    <button class="note" data-next>
+      <p>So tonight I want to sit across from you, steal the last dumpling, and watch you burn your tongue on the first one even though I warned you.</p>
+      <p class="soft">No phones, no work, just us and too much food.</p>
+    </button>
+    <div class="dots"><i></i><i></i><i class="on"></i></div>
+    <div class="hint">tap for the question</div>
+  </section>
+
+  <section class="scene" hidden>
+    <div class="eyebrow">A question, freshly folded</div>
+    <h1>Will you go on a dumpling date with me tonight?</h1>
+    <div class="when">Tonight · 7:00 pm · Din Tai Fung, Oxford St</div>
+    <p>Every xiao long bao there gets exactly <em>18 folds</em>. I'd like to count every single one of them with you.</p>
+    <div class="choice">
+      <button class="btn yes" id="yes">Yes</button>
+      <button class="btn no" id="no">No</button>
+    </div>
+    <div class="tease" id="tease"></div>
+  </section>
+
+  <section class="scene" hidden>
+    <div class="eyebrow">You said yes</div>
+    <h2>Best answer you've ever given</h2>
+    <p>Now the important part. What are we ordering? Pick as many as you like. I'll pretend I'm not ordering extra.</p>
+    <div class="chips" id="dishes"></div>
+    <button class="btn yes next" id="toTicket" disabled>Lock it in</button>
+  </section>
+
+  <section class="scene" hidden>
+    <div class="eyebrow">Reservation for two</div>
+    <div class="ticket">
+      <div class="stamp">IT'S A<br>DATE</div>
+      <h3>Din Tai Fung<br>Oxford Street</h3>
+      <div class="row"><span>Guests</span><span>You + me</span></div>
+      <div class="row"><span>When</span><span id="tWhen">Tonight, 7:00 pm</span></div>
+      <div class="row"><span>Order</span><span id="tOrder"></span></div>
+      <div class="row"><span>Dress code</span><span>Hungry, and cute as always</span></div>
+      <div class="row"><span>Find it</span><span><a href="https://www.google.com/maps/search/?api=1&query=Din+Tai+Fung+Oxford+Street+London" target="_blank" rel="noopener">Open in Maps</a></span></div>
+      <div class="ps">P.S. Thank you for being you. See you at seven. I'll be the one already looking at the menu.</div>
+    </div>
+    <p class="small">Screenshot this and send it to me so I know you're coming.</p>
+    <button class="btn no" id="restart">Change the order</button>
+  </section>
+
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+const scenes = [...document.querySelectorAll('.scene')];
+let cur = 0;
+const show = n => { cur = n; scenes.forEach((s,i) => s.hidden = i!==n); window.scrollTo(0,0); };
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* tonight's date label */
+try {
+  const d = new Intl.DateTimeFormat('en-GB',{weekday:'long', day:'numeric', month:'long'}).format(new Date(2026,9,29));
+  $('tWhen').textContent = 'Tonight, ' + d + ', 7:00 pm';
+} catch(e) {}
+
+/* lid */
+$('steamer').addEventListener('click', () => {
+  $('steamer').classList.add('open');
+  $('hint').textContent = 'smells good already...';
+  setTimeout(() => show(1), reduce ? 0 : 1500);
+});
+
+/* notes */
+document.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => show(cur + 1)));
+
+/* the No button runs */
+const lines = [
+  "Hmm, I think your thumb slipped.",
+  "Try that again, I'll wait.",
+  "The dumplings are getting cold.",
+  "No is fully booked tonight.",
+  "Think of the 18 folds.",
+  "Okay, Yes is the only option now."
+];
+let tries = 0;
+function flee(e){
+  e.preventDefault();
+  const no = $('no'), box = $('app').getBoundingClientRect();
+  no.classList.add('flee');
+  const w = no.offsetWidth, h = no.offsetHeight;
+  no.style.left = Math.random() * (box.width - w) + 'px';
+  no.style.top = (Math.random() * (box.height * 0.8 - h) + box.height * 0.1) + 'px';
+  $('tease').textContent = lines[Math.min(tries, lines.length-1)];
+  tries++;
+  const yes = $('yes');
+  yes.style.fontSize = (17 + tries*2) + 'px';
+  yes.style.padding = (15 + tries*2) + 'px ' + (34 + tries*5) + 'px';
+  if (tries >= 6) no.hidden = true;
+}
+$('no').addEventListener('pointerdown', flee);
+$('no').addEventListener('click', e => { if (e.detail === 0) flee(e); });
+$('yes').addEventListener('click', () => { burst(); setTimeout(() => show(5), reduce ? 0 : 1000); });
+
+/* dishes */
+const picked = new Set();
+[
+  ['Pork xiao long bao','the classic'],
+  ['Truffle & pork XLB','we deserve it'],
+  ['Spicy pork wontons','chilli oil'],
+  ['Prawn & pork wontons','soup or dry'],
+  ['Egg fried rice with prawns','non-negotiable'],
+  ['Taiwanese cucumber','to cool down'],
+  ['Pork buns','fluffy'],
+  ['Something sweet','your call']
+].forEach(([n,s]) => {
+  const b = document.createElement('button');
+  b.className = 'chip'; b.type = 'button'; b.setAttribute('aria-pressed','false');
+  b.innerHTML = '<span></span><small></small>';
+  b.querySelector('span').textContent = n;
+  b.querySelector('small').textContent = s;
+  b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', on);
+    on ? picked.add(n) : picked.delete(n);
+    $('toTicket').disabled = picked.size === 0;
+  });
+  $('dishes').append(b);
+});
+$('toTicket').addEventListener('click', () => {
+  $('tOrder').textContent = [...picked].join(', ');
+  show(6); burst();
+});
+$('restart').addEventListener('click', () => show(5));
+
+/* confetti */
+const cv = $('fx'), cx = cv.getContext('2d');
+let parts = [], raf = null;
+function size(){ cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
+addEventListener('resize', size); size();
+function burst(){
+  if (reduce) return;
+  const cols = ['#c7332b','#d6b47a','#f5efe3'];
+  for (let i=0;i<100;i++) parts.push({
+    x: innerWidth/2, y: innerHeight*0.45,
+    vx: (Math.random()-.5)*11, vy: -Math.random()*12-3,
+    r: Math.random()*5+3, c: cols[i%3], dump: i%7===0, a: Math.random()*6, life: 0
+  });
+  if (!raf) tick();
+}
+function tick(){
+  const s = devicePixelRatio;
+  cx.clearRect(0,0,cv.width,cv.height);
+  parts.forEach(p => {
+    p.vy += .32; p.x += p.vx; p.y += p.vy; p.a += .1; p.life++;
+    cx.save(); cx.translate(p.x*s, p.y*s); cx.rotate(p.a);
+    if (p.dump){ cx.beginPath(); cx.ellipse(0,0,p.r*2.2*s,p.r*1.6*s,0,0,Math.PI*2); cx.fillStyle='#f5efe3'; cx.fill(); }
+    else { cx.fillStyle = p.c; cx.fillRect(-p.r*s, -p.r*.5*s, p.r*2*s, p.r*s); }
+    cx.restore();
+  });
+  parts = parts.filter(p => p.y < innerHeight + 40 && p.life < 240);
+  raf = parts.length ? requestAnimationFrame(tick) : (cx.clearRect(0,0,cv.width,cv.height), null);
+}
+</script>
+</body>
+</html>
