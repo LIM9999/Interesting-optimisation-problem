@@ -28,9 +28,12 @@ TICKERS = {"MCD": "MCD", "VUAG": "VUAG.L", "SSLN": "SSLN.L", "BTC": "BTC-GBP",
            "GOOGL": "GOOGL", "SGLN": "SGLN.L"}
 USD_ASSETS = ["MCD", "GOOGL"]
 
-# ---- Fallback assumptions: annualised vol in GBP terms, ~3y realised regime ----
-VOL_ASSUMED = pd.Series({"MCD": .19, "VUAG": .15, "SSLN": .30, "BTC": .50,
-                         "GOOGL": .30, "SGLN": .16})
+# ---- Fallback: trailing ~1y vols from published sources (Nov-2026), GBP-adjusted ----
+# BTC 43% (Glassnode 1y realised), MCD 19% USD (Trefis 12m) +FX -> 20%,
+# GOOGL 32% (Trefis 1y realised) +FX -> 33%, S&P ~15-18% (VIX avg 18) -> 16%,
+# silver ~37% long-run, 2026 elevated -> 40%, gold Q1 >20%, spiked >50% mid-year -> 22%
+VOL_ASSUMED = pd.Series({"MCD": .20, "VUAG": .16, "SSLN": .40, "BTC": .43,
+                         "GOOGL": .33, "SGLN": .22})
 CORR_ASSUMED = pd.DataFrame(
     #  MCD   VUAG  SSLN  BTC   GOOGL SGLN
     [[1.00, 0.40, 0.08, 0.08, 0.25, 0.08],
@@ -93,7 +96,7 @@ def main():
         r = None
         vol, corr = VOL_ASSUMED[H.index], CORR_ASSUMED.loc[H.index, H.index]
         cov_d = (np.outer(vol, vol) * corr.values) / TRADING_DAYS
-        src = "ASSUMED vols/correlations (no market data access)"
+        src = "Vols from published 1y figures (Nov-2026); correlations assumed"
 
     V = H.sum()
     w = (H / V).values
